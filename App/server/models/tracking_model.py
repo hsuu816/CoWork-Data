@@ -26,9 +26,28 @@ class TrackingRealtime(db.Model):
     item_id = db.Column(db.Integer)
     checkout_step = db.Column(db.Integer)
 
+class TrackingUserEvent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    system = db.Column(db.String(127), nullable=False)
+    version = db.Column(db.String(127), nullable=False)
+    event = db.Column(db.String(255), nullable=False)
+    event_detail = db.Column(db.String(255), nullable=False)
+    user_email = db.Column(db.String(255))
+    device_id = db.Column(db.String(255), nullable=False)
+    created_time = db.Column(db.BIGINT(), nullable=False)
+
 def get_user_behavior_by_date(date):
     analysis = TrackingAnalysis.query.filter_by(date = date + ' 00:00:00').all()
     if analysis:
         return analysis[0].to_json()
     else:
         return None
+
+def create_user_event(event):
+    try:
+        event_model = TrackingUserEvent(**event)
+        db.session.add(event_model)
+        db.session.flush()
+        db.session.commit()
+    except Exception as e:
+        print(e)
