@@ -2,6 +2,7 @@ from collections import defaultdict
 from flask import request, render_template
 import os
 import random
+import datetime
 from server import app
 from server.models.product_model import get_products, get_products_variants, create_product
 from werkzeug.utils import secure_filename
@@ -35,7 +36,7 @@ def find_product(category, paging):
         product_id = request.values["id"]
         return get_products(3, paging, {"recommend": product_id})
 
-def get_products_with_detail(url_root, products):
+def get_products_with_detail(products):
     product_ids = [p["id"] for p in products]
     variants = get_products_variants(product_ids)
     variants_map = defaultdict(list)
@@ -44,9 +45,8 @@ def get_products_with_detail(url_root, products):
 
     def parse(product, variants_map):
         product_id = product["id"]
-        image_path = url_root + 'static/assets/' + str(product_id) + '/'
-        product["main_image"] = image_path + product["main_image"]
-        product["images"] = [image_path + img for img in product["images"].split(',')]
+        product["main_image"] =  product["main_image"]
+        product["images"] = [img for img in product["images"].split(',')]
         product_variants = variants_map[product_id]
         if (not product_variants):
             return product
@@ -78,6 +78,20 @@ def get_products_with_detail(url_root, products):
         parse(product, variants_map) for product in products
     ]
 
+@app.route('/api/1.0/flash/product', methods=['GET'])
+def flash_sale():
+    paging = request.values.get('paging') or 0
+    paging = int(paging)
+    flash_product = find_product('accessories', paging)
+    end_time = datetime.datetime.now()+ datetime.timedelta(hours=1)
+    result = {
+            "data": flash_product,
+            "End_time": end_time
+        } 
+    return(result)
+
+
+
 @app.route('/api/1.0/products/<category>', methods=['GET'])
 def api_get_products(category):
     paging = request.values.get('paging') or 0
@@ -100,7 +114,7 @@ def api_get_products(category):
             return {"data": []}
 
     products_with_detail = \
-        get_products_with_detail(request.url_root, products) if products[0]["source"] == 'native' else products
+        get_products_with_detail(products) if products[0]["source"] == 'native' else products
     if (category == 'details'):
         products_with_detail = products_with_detail[0]
 
