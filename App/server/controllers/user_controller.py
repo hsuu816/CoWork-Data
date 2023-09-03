@@ -107,3 +107,10 @@ def api_get_user_behavior(date):
             "behavior_count": [0]*4,
             "user_count": [0]*4
         }
+
+@app.route('/api/1.0/user/event', methods=['POST'])
+def get_user_event():
+    response = request.json(json=data)
+    print("Status Code", response.status_code)
+    print("JSON Response ", response.json())
+    return response
