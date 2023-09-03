@@ -1,0 +1,215 @@
+{
+	"info": {
+		"_postman_id": "241d1c83-2051-4102-924e-a714d58a38ea",
+		"name": "CoWork-stylish",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28951232"
+	},
+	"item": [
+		{
+			"name": "User Event",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"system\":\"ios\",\n  \"version\":\"grid\",\n  \"event\": \"checkout\",\n  \"event_detail\": \"checkout_list\",\n  \"user_email\": \"email@facebook\",\n  \"device_id\": \"device001\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cowork-ec2}}/api/1.0/user/event",
+					"host": [
+						"{{cowork-ec2}}"
+					],
+					"path": [
+						"api",
+						"1.0",
+						"user",
+						"event"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Porduct-all",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{cowork-ec2}}/api/1.0/products/all",
+					"host": [
+						"{{cowork-ec2}}"
+					],
+					"path": [
+						"api",
+						"1.0",
+						"products",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Product-men",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{cowork-ec2}}/api/1.0/products/men",
+					"host": [
+						"{{cowork-ec2}}"
+					],
+					"path": [
+						"api",
+						"1.0",
+						"products",
+						"men"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Product-women",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{cowork-ec2}}/api/1.0/products/women",
+					"host": [
+						"{{cowork-ec2}}"
+					],
+					"path": [
+						"api",
+						"1.0",
+						"products",
+						"women"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Product-accessories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{cowork-ec2}}/api/1.0/products/accessories",
+					"host": [
+						"{{cowork-ec2}}"
+					],
+					"path": [
+						"api",
+						"1.0",
+						"products",
+						"accessories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{cowork-ec2}}/api/1.0/products/search?keyword=洋裝",
+					"host": [
+						"{{cowork-ec2}}"
+					],
+					"path": [
+						"api",
+						"1.0",
+						"products",
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "洋裝"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{cowork-ec2}}/api/1.0/auction/product",
+					"host": [
+						"{{cowork-ec2}}"
+					],
+					"path": [
+						"api",
+						"1.0",
+						"auction",
+						"product"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
