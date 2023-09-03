@@ -1,4 +1,5 @@
 import bcrypt
+import json
 from flask import request, jsonify, render_template
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from server import app
@@ -49,7 +50,7 @@ def api_signin():
         "access_expired": TOKEN_EXPIRE,
         "user": {
             "id": user["id"],
-            "rovider": 'native',
+            "provider": 'native',
             "name": user["username"],
             "email": email,
             "picture": ""
@@ -110,7 +111,12 @@ def api_get_user_behavior(date):
 
 @app.route('/api/1.0/user/event', methods=['POST'])
 def get_user_event():
-    response = request.json(json=data)
-    print("Status Code", response.status_code)
-    print("JSON Response ", response.json())
+    data = request.data
+    data_str = data.decode('utf-8')
+    json_data = json.loads(data_str)
+
+    if (len(json_data) == 7):
+        response = {"status": "OK"}
+    else:
+        response = {"status": "Please check data in body."}
     return response
