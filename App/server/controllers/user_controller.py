@@ -112,23 +112,33 @@ def api_get_user_behavior(date):
 
 @app.route('/api/1.0/user/event', methods=['POST'])
 def get_user_event():
-    data = request.data
-    data_str = data.decode('utf-8')
-    json_data = json.loads(data_str)
+    try:
+        data = request.data
+        data_str = data.decode('utf-8')
+        json_data = json.loads(data_str)
 
-    event = {
-        'system': json_data['system'],
-        'version': json_data['version'],
-        'event': json_data['event'],
-        'event_detail': json_data['event_detail'],
-        'user_email': json_data['user_email'],
-        'device_id': json_data['device_id'],
-        'created_time': time.time()
-    }
+        event = {
+            'system': json_data['system'],
+            'version': json_data['version'],
+            'event': json_data['event'],
+            'event_detail': json_data['event_detail'],
+            'user_email': json_data['user_email'],
+            'device_id': json_data['device_id'],
+            'created_time': int(time.time() * 1000)
+        }
 
-    if(event):
-        create_user_event(event)
-        response = {"status": "OK"}
-    else:
-        response = {"status": "Please check data in body."}
+        valid_events = ["view_item", "add_to_cart", "checkout"]
+        valid_event_details = ["product_id", "checkout_list"]
+
+        if event['event'] not in valid_events:
+            response = {"status": f"Invalid event. Supported events are <{', '.join(valid_events)}>."}
+        elif event['event_detail'] not in valid_event_details:
+            response = {"status": f"Invalid event detail. Supported event details are <{', '.join(valid_event_details)}>."}
+        else:
+            create_user_event(event)
+            response = {"status": "OK"}
+
+    except Exception as e:
+        response = {"status": f"Error: {str(e)}"}
+
     return response
