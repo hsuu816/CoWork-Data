@@ -78,20 +78,6 @@ def get_products_with_detail(products):
         parse(product, variants_map) for product in products
     ]
 
-@app.route('/api/1.0/flash/product', methods=['GET'])
-def flash_sale():
-    paging = request.values.get('paging') or 0
-    paging = int(paging)
-    flash_product = find_product('accessories', paging)
-    end_time = datetime.datetime.now()+ datetime.timedelta(hours=1)
-    result = {
-            "data": flash_product,
-            "End_time": end_time
-        } 
-    return(result)
-
-
-
 @app.route('/api/1.0/products/<category>', methods=['GET'])
 def api_get_products(category):
     paging = request.values.get('paging') or 0
@@ -192,3 +178,25 @@ def api_create_product():
 
     create_product(product, variants)
     return "Ok"
+
+@app.route('/api/1.0/auction/product', methods=['GET'])
+def flash_sale():
+    paging = request.values.get('paging') or 0
+    paging = int(paging)
+    auction_product = find_product('accessories', paging)
+    end_time = 1694275200
+    for item in auction_product["products"]:
+        price = item.get("price")
+        if price >= 2000:
+            min_bid_unit = 200
+        elif price >= 1000:
+            min_bid_unit = 100
+        elif price >= 100:
+            min_bid_unit = 50
+        item["end_time"] = end_time
+        item["min_bid_unit"] = min_bid_unit
+
+    result = {
+        "data": auction_product['products']
+    } 
+    return result
