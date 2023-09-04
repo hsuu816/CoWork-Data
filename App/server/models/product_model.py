@@ -39,7 +39,7 @@ class AuctionProduct(db.Model):
     category = db.Column(db.String(127), index=True)
     title = db.Column(db.String(255), index=True)
     description = db.Column(db.String(255))
-    start_bid = db.Column(db.Integer)
+    price = db.Column(db.Integer)
     texture = db.Column(db.String(127))
     wash = db.Column(db.String(127))
     place = db.Column(db.String(127))
