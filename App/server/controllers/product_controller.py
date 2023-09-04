@@ -184,7 +184,7 @@ def flash_sale():
     paging = request.values.get('paging') or 0
     paging = int(paging)
     auction_product = find_product('accessories', paging)
-    end_time = 1694275200
+    end_time = 1694275200000
     for item in auction_product["products"]:
         price = item.get("price")
         if price >= 2000:
