@@ -33,6 +33,51 @@ class Variant(db.Model):
 
     def __repr__(self):
         return '<Variant {}>'.format(self.id)
+    
+class AuctionProduct(db.Model):
+    id = db.Column(db.String(200), primary_key=True)
+    category = db.Column(db.String(127), index=True)
+    title = db.Column(db.String(255), index=True)
+    description = db.Column(db.String(255))
+    start_bid = db.Column(db.Integer)
+    texture = db.Column(db.String(127))
+    wash = db.Column(db.String(127))
+    place = db.Column(db.String(127))
+    note = db.Column(db.String(127))
+    story = db.Column(db.Text())
+    main_image = db.Column(db.String(255))
+    images = db.Column(db.String(255))
+    source = db.Column(db.String(127))
+    image_base64 = db.Column(db.Text())
+    end_time = db.Column(db.BIGINT())
+    min_bid_unit = db.Column(db.Integer)
+
+def get_auction_products(page_size, paging, requirement = {}):
+    product_query = None
+    if ("category" in requirement):
+        category = requirement.get("category")
+        if (category == 'all'):
+            product_query = AuctionProduct.query.filter_by(source = 'native')
+        else:
+            product_query = AuctionProduct.query.filter_by(source = 'native', category = category)
+    elif ("keyword" in requirement):
+        product_query = AuctionProduct.query.filter_by(source = 'native').filter(AuctionProduct.title.like(f"%{requirement.get('keyword')}%"))
+    elif ("id" in requirement):
+        product_query = AuctionProduct.query.filter_by(id = requirement.get("id"))
+    elif ("source" in requirement):
+        product_query = AuctionProduct.query.filter_by(source = requirement.get("source"))
+    elif ("recommend" in requirement):
+        product_query = AuctionProduct.query.join(SimilarityModel, AuctionProduct.id == SimilarityModel.item2_id)\
+            .filter_by(item1_id = requirement.get("recommend"))\
+            .order_by(SimilarityModel.similarity.desc())
+         
+    products = product_query.limit(page_size).offset(page_size * paging).all()
+    count = product_query.count()
+
+    return {
+        "products": [p.to_json() for p in products],
+        "product_count": count
+    }
 
 def get_products(page_size, paging, requirement = {}):
     product_query = None

@@ -1,9 +1,11 @@
 import bcrypt
+import json
+import time
 from flask import request, jsonify, render_template
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from server import app
 from server.models.user_model import get_user, create_user
-from server.models.tracking_model import get_user_behavior_by_date
+from server.models.tracking_model import get_user_behavior_by_date, create_user_event
 from server.utils.util import dir_last_updated
 
 TOKEN_EXPIRE = app.config['TOKEN_EXPIRE']
@@ -49,7 +51,7 @@ def api_signin():
         "access_expired": TOKEN_EXPIRE,
         "user": {
             "id": user["id"],
-            "rovider": 'native',
+            "provider": 'native',
             "name": user["username"],
             "email": email,
             "picture": ""
@@ -107,3 +109,37 @@ def api_get_user_behavior(date):
             "behavior_count": [0]*4,
             "user_count": [0]*4
         }
+
+@app.route('/api/1.0/user/event', methods=['POST'])
+def get_user_event():
+    try:
+        data = request.data
+        data_str = data.decode('utf-8')
+        json_data = json.loads(data_str)
+
+        event = {
+            'system': json_data['system'],
+            'version': json_data['version'],
+            'category': json_data['category'],
+            'event': json_data['event'],
+            'event_detail': json_data['event_detail'],
+            'user_email': json_data['user_email'],
+            'user_id': json_data['user_id'],
+            'created_time': int(time.time() * 1000)
+        }
+
+        valid_events = ["view_item", "add_to_cart", "checkout"]
+        category = ["hot", "all", "men", "women", "accessories", "checkout"]
+
+        if event['event'] not in valid_events:
+            response = {"status": f"Invalid event. Supported events are <{', '.join(valid_events)}>."}
+        elif event['category'] not in category:
+            response = {"status": f"Invalid category. Supported categories are <{', '.join(category)}>."}
+        else:
+            create_user_event(event)
+            response = {"status": "OK"}
+
+    except Exception as e:
+        response = {"status": f"Error: {str(e)}"}
+
+    return response
