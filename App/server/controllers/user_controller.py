@@ -124,12 +124,12 @@ def get_user_event():
             'event': json_data['event'],
             'event_detail': json_data['event_detail'],
             'user_email': json_data['user_email'],
-            'device_id': json_data['device_id'],
+            'user_id': json_data['user_id'],
             'created_time': int(time.time() * 1000)
         }
 
         valid_events = ["view_item", "add_to_cart", "checkout"]
-        category = ["hot", "all", "men", "women", "accessories"]
+        category = ["hot", "all", "men", "women", "accessories", "checkout"]
 
         if event['event'] not in valid_events:
             response = {"status": f"Invalid event. Supported events are <{', '.join(valid_events)}>."}
