@@ -4,7 +4,7 @@ import os
 import random
 import datetime
 from server import app
-from server.models.product_model import get_products, get_products_variants, create_product
+from server.models.product_model import get_products, get_auction_products, get_products_variants, create_product
 from werkzeug.utils import secure_filename
 
 PAGE_SIZE = 6
@@ -35,6 +35,22 @@ def find_product(category, paging):
     elif (category == 'recommend'):
         product_id = request.values["id"]
         return get_products(3, paging, {"recommend": product_id})
+    
+def find_auction_product(category, paging):
+    if (category == 'all') :
+        return get_auction_products(PAGE_SIZE, paging, {"category": category})
+    elif (category in ['men', 'women', 'accessories']):
+        return get_auction_products(PAGE_SIZE, paging, {"category": category})
+    elif (category == 'search'):
+        keyword = request.values["keyword"]
+        if (keyword):
+            return get_auction_products(PAGE_SIZE, paging, {"keyword": keyword})
+    elif (category == 'details'):
+        product_id = request.values["id"]
+        return get_auction_products(PAGE_SIZE, paging, {"id": product_id})
+    elif (category == 'recommend'):
+        product_id = request.values["id"]
+        return get_auction_products(3, paging, {"recommend": product_id})
 
 def get_products_with_detail(products):
     product_ids = [p["id"] for p in products]
@@ -180,21 +196,10 @@ def api_create_product():
     return "Ok"
 
 @app.route('/api/1.0/auction/product', methods=['GET'])
-def flash_sale():
+def auction_sale():
     paging = request.values.get('paging') or 0
     paging = int(paging)
-    auction_product = find_product('accessories', paging)
-    end_time = 1694275200000
-    for item in auction_product["products"]:
-        price = item.get("price")
-        if price >= 2000:
-            min_bid_unit = 200
-        elif price >= 1000:
-            min_bid_unit = 100
-        elif price >= 100:
-            min_bid_unit = 50
-        item["end_time"] = end_time
-        item["min_bid_unit"] = min_bid_unit
+    auction_product = find_auction_product('all', paging)
 
     result = {
         "data": auction_product['products']
