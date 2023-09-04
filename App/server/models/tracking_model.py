@@ -30,6 +30,7 @@ class TrackingUserEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     system = db.Column(db.String(127), nullable=False)
     version = db.Column(db.String(127), nullable=False)
+    category = db.Column(db.String(255), nullable=False)
     event = db.Column(db.String(255), nullable=False)
     event_detail = db.Column(db.String(255), nullable=False)
     user_email = db.Column(db.String(255))

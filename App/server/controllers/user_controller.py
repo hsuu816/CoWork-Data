@@ -120,6 +120,7 @@ def get_user_event():
         event = {
             'system': json_data['system'],
             'version': json_data['version'],
+            'category': json_data['category'],
             'event': json_data['event'],
             'event_detail': json_data['event_detail'],
             'user_email': json_data['user_email'],
@@ -128,9 +129,12 @@ def get_user_event():
         }
 
         valid_events = ["view_item", "add_to_cart", "checkout"]
+        category = ["hot", "all", "men", "women", "accessories"]
 
         if event['event'] not in valid_events:
             response = {"status": f"Invalid event. Supported events are <{', '.join(valid_events)}>."}
+        elif event['category'] not in category:
+            response = {"status": f"Invalid category. Supported categories are <{', '.join(category)}>."}
         else:
             create_user_event(event)
             response = {"status": "OK"}
