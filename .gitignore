@@ -1,0 +1,9 @@
+*.tmp
+__pycache__/
+*.pem
+.vscode/
+.alcache/
+.DS_Store
+.env
+chromedriver-mac-arm64/
+chromedriver-linux64/
