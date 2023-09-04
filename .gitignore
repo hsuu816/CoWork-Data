@@ -5,5 +5,8 @@ __pycache__/
 .alcache/
 .DS_Store
 .env
+*.iml
+*.xml
 chromedriver-mac-arm64/
 chromedriver-linux64/
+for_cowork_bq.json
