@@ -19,7 +19,7 @@ mysql_database = os.environ.get('DB_DATABASE')
 
 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "for_cowork_bq.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/yuchenhsiao/co-work-data/for_cowork_bq.json"
 bg_client = bigquery.Client()
 DATASET_NAME = os.getenv("DATASET_NAME")
 
@@ -44,6 +44,7 @@ def get_product_table():
 
 
 def get_event_table(last_ts):
+    connection.commit()
     with connection.cursor() as cursor:
         cursor.execute(f"SELECT * FROM tracking_user_event WHERE created_time > {last_ts}")
         results = cursor.fetchall()
@@ -72,12 +73,15 @@ def update_event_table():
                 cursor.execute("SELECT created_time FROM tracking_user_event limit 1")
                 result = cursor.fetchone()
                 last_ts = int(result['created_time'])-1
+        print(last_ts)
         dataframe = get_event_table(last_ts)
+        print(dataframe)
         if dataframe is not None:
             last_ts = int(dataframe.iloc[-1]['created_time'])
             dataframe['created_time_tw'] = dataframe['created_time'].apply(lambda ts: datetime.datetime.fromtimestamp(ts // 1000))
             upload_to_bigquery(dataframe, "tracking_user_event")
-        time.sleep(5)
+
+        time.sleep(60)
 
 
 if __name__ == "__main__":
