@@ -52,6 +52,13 @@ class AuctionProduct(db.Model):
     end_time = db.Column(db.BIGINT())
     min_bid_unit = db.Column(db.Integer)
 
+class Management(db.Model):
+    auction_id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.String(200))
+    start_time = db.Column(db.BIGINT())
+    end_time = db.Column(db.BIGINT())
+    status = db.Column(db.String(45))
+
 def get_auction_products(page_size, paging, requirement = {}):
     product_query = None
     if ("category" in requirement):
