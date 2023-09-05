@@ -4,7 +4,7 @@ import os
 import random
 import datetime
 from server import app
-from server.models.product_model import get_products, get_auction_products, get_products_variants, create_product
+from server.models.product_model import get_products, get_auction_products, get_products_variants, create_product, get_auction_managements
 from werkzeug.utils import secure_filename
 
 PAGE_SIZE = 6
@@ -94,6 +94,31 @@ def get_products_with_detail(products):
         parse(product, variants_map) for product in products
     ]
 
+def get_auction_with_management(auctions):
+    auction_ids = [a["id"] for a in auctions]
+    managements = get_auction_managements(auction_ids)
+    managements_map = defaultdict(list)
+    for management in managements:
+        managements_map[management["auction_product_id"]].append(management)
+
+    def parse(auction, managements_map):
+        auction_id = auction["id"]
+        auction_managements = managements_map[auction_id]
+        if (not auction_managements):
+            return auction
+        
+        auction["auction_id"] = auction_managements[0]["auction_id"]
+        auction["start_time"] = auction_managements[0]["start_time"]
+        auction["end_time"] = auction_managements[0]["end_time"]
+        auction["status"] = auction_managements[0]["status"]
+        return auction
+    
+    return [
+        parse(auction, managements_map) for auction in auctions
+    ]
+
+
+
 @app.route('/api/1.0/products/<category>', methods=['GET'])
 def api_get_products(category):
     paging = request.values.get('paging') or 0
@@ -103,7 +128,7 @@ def api_get_products(category):
     if (not res):
         return {"error":'Wrong Request'}
 
-    products = res.get("products")
+    products = res.get("products") 
     product_count = res.get("product_count")
 
     if (not products):
@@ -199,9 +224,15 @@ def api_create_product():
 def auction_sale():
     paging = request.values.get('paging') or 0
     paging = int(paging)
-    auction_product = find_auction_product('all', paging)
+    res = find_auction_product('all', paging)
+    auctions = res.get("products")
+
+    if (not auctions):
+        return {"error":'Wrong Request'}
+    
+    auction_with_management = get_auction_with_management(auctions)
 
     result = {
-        "data": auction_product['products']
+        "data": auction_with_management
     } 
     return result
