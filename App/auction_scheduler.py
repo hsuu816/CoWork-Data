@@ -1,10 +1,11 @@
 import redis 
-import pymysql  
 import pymysql.cursors
-import datetime
 import time
 from dotenv import load_dotenv
 import os
+import asyncio
+import websockets
+import json
 
 load_dotenv(verbose=True)
 
@@ -28,6 +29,19 @@ def get_auction_info():
         result = cursor.fetchone()
     return result
 
+
+async def notify():
+    url = "ws://127.0.0.1:9000/api/1.0/update_bid"
+    async with websockets.connect(url) as websocket:
+        data = json.dumps({
+            "type": "trigger_notify_winner",
+            "auction_id": r.get('auction_id'),
+            "product_id": r.get('product_id')
+        })
+        await websocket.send(data)
+        response = await websocket.recv()
+        print(response)
+        # Exiting the 'async with' block will close the connection
 
 # data_dict = {}
 # data_dict['auction_id'] = get_auction_info()['auction_id']
@@ -53,5 +67,6 @@ while True:
         with connection.cursor() as cursor:
             cursor.execute("UPDATE cowork.management SET status = 'successed' where auction_id = %s", (auction_id,))
         connection.commit()
+        asyncio.get_event_loop().run_until_complete(notify())
         r.flushdb()
 
