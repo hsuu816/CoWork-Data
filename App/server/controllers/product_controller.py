@@ -2,7 +2,6 @@ from collections import defaultdict
 from flask import request, render_template
 import os
 import random
-import datetime
 from server import app
 from server.models.product_model import get_products, get_auction_products, get_products_variants, create_product, get_auction_managements
 from werkzeug.utils import secure_filename
