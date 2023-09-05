@@ -5,12 +5,14 @@ import redis
 from server.utils.util import dir_last_updated
 from message_q import prepare_data_to_message_queue
 
-latest_price = 500
+latest_price = 0
+email = 'Null'
 connected_clients = set()
 
 
 async def handler(websocket, path):
     global latest_price
+    global email
     global connected_clients
 
     # Add newly connected client to the set
@@ -20,6 +22,9 @@ async def handler(websocket, path):
         if path == '/api/1.0/update_bid':
             try:
                 async for message in websocket:
+                    print(connected_clients)
+                    print(websocket)
+
                     message_data = json.loads(message)
 
                     if message_data.get("type") == "initialize":
@@ -47,7 +52,6 @@ async def handler(websocket, path):
                     elif message_data.get("type") == "trigger_notify_winner":
                         print('Notifying Winner')
                         print('-' * 50)
-                        email = message_data.get("email")
 
                         # Internal response
                         internal_message = 'Notify Successfully'
@@ -57,7 +61,7 @@ async def handler(websocket, path):
                             "email": email,
                             "auction_id": "test_auction_id",
                             "product_id": "test_product_id",
-                            "final_bid_price": "test_final_bid_price"
+                            "final_bid_price": latest_price
                         })
 
                         await websocket.send(internal_message)
