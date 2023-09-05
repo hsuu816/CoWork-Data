@@ -17,6 +17,9 @@ async def handler(websocket, path):
         if path == '/api/1.0/update_bid':
             try:
                 async for message in websocket:
+                    print(connected_clients)
+                    print(websocket)
+
                     message_data = json.loads(message)
 
                     if message_data.get("type") == "bid_increment":
