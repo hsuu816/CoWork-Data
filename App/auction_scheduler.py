@@ -41,8 +41,10 @@ while True:
     if r.get('auction_id') is None:
         auction_id = get_auction_info()['auction_id']
         r.setnx('auction_id', auction_id)
-        r.set('latest_price', get_auction_info()['start_bid'])
+        r.set('start_bid', get_auction_info()['start_bid'])
         r.set('end_time', get_auction_info()['end_time'])
+        r.set('product_id', get_auction_info()['auction_product_id'])
+        print(r.get('product_id'))
         with connection.cursor() as cursor:
             cursor.execute("UPDATE cowork.management SET status = 'going' where auction_id = %s", (auction_id,))
         connection.commit()
