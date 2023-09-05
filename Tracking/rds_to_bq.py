@@ -19,7 +19,7 @@ mysql_database = os.environ.get('DB_DATABASE')
 
 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/yuchenhsiao/co-work-data/for_cowork_bq.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "for_cowork_bq.json"
 bg_client = bigquery.Client()
 DATASET_NAME = os.getenv("DATASET_NAME")
 
