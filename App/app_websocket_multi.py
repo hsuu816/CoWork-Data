@@ -1,6 +1,10 @@
 import asyncio
 import json
 import websockets
+import redis
+from server.utils.util import dir_last_updated
+from message_q import to_message_queue
+
 
 latest_price = 500
 connected_clients = set()
@@ -28,6 +32,7 @@ async def handler(websocket, path):
                         # Broadcast latest price to all connected clients
                         broadcast_message = json.dumps({"type": "latest_price", "number": latest_price})
                         await asyncio.wait([client.send(broadcast_message) for client in connected_clients])
+                        to_message_queue(broadcast_message)         
                     else:
                         print({"Error": "Wrong Payload"})
 
