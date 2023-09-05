@@ -49,7 +49,6 @@ class AuctionProduct(db.Model):
     images = db.Column(db.String(255))
     source = db.Column(db.String(127))
     image_base64 = db.Column(db.Text())
-    end_time = db.Column(db.BIGINT())
     min_bid_unit = db.Column(db.Integer)
 
 class Management(db.Model):
