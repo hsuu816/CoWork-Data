@@ -5,10 +5,16 @@ import redis
 from server.utils.util import dir_last_updated
 from message_q import to_message_queue
 
-
 latest_price = 500
 connected_clients = set()
 
+def connect_to_redis(pool):
+    try:
+        redis_client = redis.Redis(connection_pool=pool)
+        print("Successfully connected to Redis!")
+        return redis_client
+    except redis.ConnectionError as e:
+        print("Error connecting to Redis:", str(e))
 
 async def handler(websocket, path):
     global latest_price
